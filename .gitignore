@@ -1,0 +1,9 @@
+.externalNativeBuild
+.gradle
+.idea
+*.iml
+android.keystore
+build
+local.properties
+MAVEN
+tags
