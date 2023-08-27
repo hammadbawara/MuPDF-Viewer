@@ -1,20 +1,9 @@
 package com.artifex.mupdf.viewer;
 
-import com.artifex.mupdf.fitz.Cookie;
-import com.artifex.mupdf.fitz.Link;
-import com.artifex.mupdf.fitz.Quad;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.content.ClipData;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap.Config;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -25,24 +14,23 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.FileUriExposedException;
 import android.os.Handler;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-import android.os.AsyncTask;
+
+import com.artifex.mupdf.fitz.Cookie;
+import com.artifex.mupdf.fitz.Link;
+import com.artifex.mupdf.fitz.Quad;
 
 // Make our ImageViews opaque to optimize redraw
-class OpaqueImageView extends ImageView {
+class OpaqueImageView extends androidx.appcompat.widget.AppCompatImageView {
 
 	public OpaqueImageView(Context context) {
 		super(context);
@@ -93,7 +81,9 @@ public class PageView extends ViewGroup {
 	private       ProgressBar mBusyIndicator;
 	private final Handler   mHandler = new Handler();
 
-	public PageView(Context c, MuPDFCore core, Point parentSize, Bitmap sharedHqBm) {
+	private boolean isDarkMode;
+
+	public PageView(Context c, MuPDFCore core, Point parentSize, Bitmap sharedHqBm, Boolean isDarkMode) {
 		super(c);
 		mContext = c;
 		mCore = core;
@@ -102,6 +92,7 @@ public class PageView extends ViewGroup {
 		mEntireBm = Bitmap.createBitmap(parentSize.x, parentSize.y, Config.ARGB_8888);
 		mPatchBm = sharedHqBm;
 		mEntireMat = new Matrix();
+		this.isDarkMode = isDarkMode;
 	}
 
 	private void reinit() {
@@ -302,7 +293,11 @@ public class PageView extends ViewGroup {
 				mBusyIndicator = null;
 				if (result.booleanValue()) {
 					clearRenderError();
+					if (isDarkMode){
+						mEntireBm = Utils.invertBitmapColors(mEntireBm);
+					}
 					mEntire.setImageBitmap(mEntireBm);
+
 					mEntire.invalidate();
 				} else {
 					setRenderError("Error rendering page");
@@ -509,6 +504,9 @@ public class PageView extends ViewGroup {
 						mPatchViewSize = patchViewSize;
 						mPatchArea = patchArea;
 						clearRenderError();
+						if (isDarkMode) {
+							mPatchBm = Utils.invertBitmapColors(mPatchBm);
+						}
 						mPatch.setImageBitmap(mPatchBm);
 						mPatch.invalidate();
 						//requestLayout();

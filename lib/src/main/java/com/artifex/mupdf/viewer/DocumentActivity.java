@@ -1,23 +1,16 @@
 package com.artifex.mupdf.viewer;
 
-import com.artifex.mupdf.fitz.SeekableInputStream;
-
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,11 +22,9 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
@@ -44,13 +35,10 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewAnimator;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import com.artifex.mupdf.fitz.SeekableInputStream;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -83,6 +71,7 @@ public class DocumentActivity extends Activity
 	private ImageButton  mSearchBack;
 	private ImageButton  mSearchFwd;
 	private ImageButton  mSearchClose;
+	private ImageButton mDarkMode;
 	private EditText     mSearchText;
 	private SearchTask   mSearchTask;
 	private AlertDialog.Builder mAlertBuilder;
@@ -92,6 +81,8 @@ public class DocumentActivity extends Activity
 	private AlertDialog mAlertDialog;
 	private ArrayList<OutlineActivity.Item> mFlatOutline;
 	private boolean mReturnToLibraryActivity = false;
+
+	private boolean isDarkMode = false;
 
 	protected int mDisplayDPI;
 	private int mLayoutEM = 10;
@@ -198,7 +189,7 @@ public class DocumentActivity extends Activity
 		super.onCreate(savedInstanceState);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		//getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -492,21 +483,15 @@ public class DocumentActivity extends Activity
 		});
 
 		// Activate search invoking buttons
-		mSearchBack.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				search(-1);
-			}
-		});
-		mSearchFwd.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				search(1);
-			}
-		});
+		mSearchBack.setOnClickListener(v -> search(-1));
+		mSearchFwd.setOnClickListener(v -> search(1));
 
-		mLinkButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				setLinkHighlight(!mLinkHighlight);
-			}
+		mLinkButton.setOnClickListener(v -> setLinkHighlight(!mLinkHighlight));
+
+		mDarkMode.setOnClickListener(v -> {
+			isDarkMode = !isDarkMode;
+			mDocView.setDarkMode(isDarkMode);
+			mDocView.refresh();
 		});
 
 		if (core.isReflowable()) {
@@ -659,6 +644,7 @@ public class DocumentActivity extends Activity
 	}
 
 	private void showButtons() {
+
 		if (core == null)
 			return;
 		if (!mButtonsVisible) {
@@ -772,6 +758,7 @@ public class DocumentActivity extends Activity
 		mSearchText = (EditText)mButtonsView.findViewById(R.id.searchText);
 		mLinkButton = (ImageButton)mButtonsView.findViewById(R.id.linkButton);
 		mLayoutButton = mButtonsView.findViewById(R.id.layoutButton);
+		mDarkMode = (ImageButton) mButtonsView.findViewById(R.id.darkModeButton);
 		mTopBarSwitcher.setVisibility(View.INVISIBLE);
 		mPageNumberView.setVisibility(View.INVISIBLE);
 

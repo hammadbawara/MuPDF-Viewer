@@ -28,13 +28,19 @@
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
 				android:layout_gravity="center"
-				android:paddingLeft="16dp"
-				android:paddingRight="8dp"
+				android:paddingStart="16dp"
+				android:paddingEnd="8dp"
 				android:singleLine="true"
 				android:ellipsize="end"
 				android:textSize="16sp"
 				android:textColor="@android:color/white"
 				/>
+			<ImageButton
+				android:id="@+id/darkModeButton"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/ic_dark_mode_24dp"
+				android:background="@drawable/button"/>
 
 			<ImageButton
 				android:id="@+id/linkButton"
@@ -125,7 +131,6 @@
 	</ViewAnimator>
 
 	<RelativeLayout
-		android:id="@+id/lowerButtons"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"

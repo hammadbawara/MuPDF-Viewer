@@ -4,17 +4,18 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.os.AsyncTask;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.os.AsyncTask;
 
 public class PageAdapter extends BaseAdapter {
 	private final Context mContext;
 	private final MuPDFCore mCore;
 	private final SparseArray<PointF> mPageSizes = new SparseArray<PointF>();
 	private       Bitmap mSharedHqBm;
+	private       boolean isDarkMode = false;
 
 	public PageAdapter(Context c, MuPDFCore core) {
 		mContext = c;
@@ -27,6 +28,10 @@ public class PageAdapter extends BaseAdapter {
 		} catch (RuntimeException e) {
 			return 0;
 		}
+	}
+
+	void setDarkMode(boolean isDarkMode){
+		this.isDarkMode = isDarkMode;
 	}
 
 	public Object getItem(int position) {
@@ -60,7 +65,7 @@ public class PageAdapter extends BaseAdapter {
 					mSharedHqBm = null;
 			}
 
-			pageView = new PageView(mContext, mCore, new Point(parent.getWidth(), parent.getHeight()), mSharedHqBm);
+			pageView = new PageView(mContext, mCore, new Point(parent.getWidth(), parent.getHeight()), mSharedHqBm, isDarkMode);
 		} else {
 			pageView = (PageView) convertView;
 		}
