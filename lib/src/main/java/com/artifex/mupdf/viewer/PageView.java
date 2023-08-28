@@ -83,7 +83,7 @@ public class PageView extends ViewGroup {
 
 	private boolean isDarkMode;
 
-	public PageView(Context c, MuPDFCore core, Point parentSize, Bitmap sharedHqBm, Boolean isDarkMode) {
+	public PageView(Context c, MuPDFCore core, Point parentSize, Bitmap sharedHqBm) {
 		super(c);
 		mContext = c;
 		mCore = core;
@@ -92,7 +92,6 @@ public class PageView extends ViewGroup {
 		mEntireBm = Bitmap.createBitmap(parentSize.x, parentSize.y, Config.ARGB_8888);
 		mPatchBm = sharedHqBm;
 		mEntireMat = new Matrix();
-		this.isDarkMode = isDarkMode;
 	}
 
 	private void reinit() {
@@ -658,6 +657,20 @@ public class PageView extends ViewGroup {
 				}
 			}
 		};
+	}
+
+	void setDarkMode(boolean darkMode) {
+		this.isDarkMode = darkMode;
+		if (mEntire != null) {
+			mEntire.invalidate();
+			mEntireBm = Utils.invertBitmapColors(mEntireBm);
+			mEntire.setImageBitmap(mEntireBm);
+		}
+		if (mPatch != null) {
+			mPatch.invalidate();
+			mPatchBm = Utils.invertBitmapColors(mPatchBm);
+			mPatch.setImageBitmap(mPatchBm);
+		}
 	}
 
 	protected Link[] getLinkInfo() {

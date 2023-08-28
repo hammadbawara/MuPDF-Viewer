@@ -351,6 +351,17 @@ public class ReaderView
 		requestLayout();
 	}
 
+	void setDarkMode(boolean isDarkMode) {
+		applyToChildren(new ViewMapper() {
+			public void applyToView(View view) {
+				if (mCurrent == ((PageView)view).getPage()){
+					((PageView)view).refreshDrawableState();
+				}
+				((PageView)view).setDarkMode(isDarkMode);
+			}
+		});
+	}
+
 	public View getView(int i) {
 		return mChildViews.get(i);
 	}
@@ -905,11 +916,6 @@ public class ReaderView
 		resetupChildren();
 		invalidate();
 	}
-
-	void setDarkMode(boolean isDarkMode) {
-		mAdapter.setDarkMode(isDarkMode);
-	}
-
 	public boolean onSingleTapUp(MotionEvent e) {
 		Link link = null;
 		if (!tapDisabled) {

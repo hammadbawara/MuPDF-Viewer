@@ -491,7 +491,6 @@ public class DocumentActivity extends Activity
 		mDarkMode.setOnClickListener(v -> {
 			isDarkMode = !isDarkMode;
 			mDocView.setDarkMode(isDarkMode);
-			mDocView.refresh();
 		});
 
 		if (core.isReflowable()) {
