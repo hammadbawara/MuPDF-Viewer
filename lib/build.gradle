@@ -13,10 +13,10 @@ dependencies {
 }
 
 android {
-	compileSdkVersion 31
+	compileSdk 33
 	defaultConfig {
 		minSdkVersion 21
-		targetSdkVersion 31
+		targetSdkVersion 33
 	}
 	publishing {
 		singleVariant("release") {

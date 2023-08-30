@@ -35,28 +35,27 @@
 				android:textSize="16sp"
 				android:textColor="@android:color/white"
 				/>
+
 			<ImageButton
 				android:id="@+id/darkModeButton"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:src="@drawable/ic_dark_mode_24dp"
-				android:background="@drawable/button"/>
+				android:layout_width="52dp"
+				android:layout_height="52dp"
+				android:background="@drawable/button"
+				android:src="@drawable/ic_dark_mode_24dp" />
 
 			<ImageButton
 				android:id="@+id/linkButton"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_width="52dp"
+				android:layout_height="52dp"
 				android:background="@drawable/button"
-				android:src="@drawable/ic_link_white_24dp"
-				/>
+				android:src="@drawable/ic_link_white_24dp" />
 
 			<ImageButton
 				android:id="@+id/searchButton"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_width="52dp"
+				android:layout_height="52dp"
 				android:background="@drawable/button"
-				android:src="@drawable/ic_search_white_24dp"
-				/>
+				android:src="@drawable/ic_search_white_24dp" />
 
 			<ImageButton
 				android:id="@+id/layoutButton"
@@ -69,11 +68,10 @@
 
 			<ImageButton
 				android:id="@+id/outlineButton"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_width="52dp"
+				android:layout_height="52dp"
 				android:background="@drawable/button"
-				android:src="@drawable/ic_toc_white_24dp"
-				/>
+				android:src="@drawable/ic_toc_white_24dp" />
 
 		</LinearLayout>
 
@@ -88,43 +86,39 @@
 			<ImageButton
 				android:id="@+id/searchClose"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_height="52dp"
 				android:background="@drawable/button"
-				android:src="@drawable/ic_close_white_24dp"
-				/>
+				android:src="@drawable/ic_close_white_24dp" />
 
 			<EditText
 				android:id="@+id/searchText"
-				android:background="@android:color/transparent"
 				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
+				android:layout_height="52dp"
 				android:layout_gravity="center"
-				android:inputType="text"
-				android:imeOptions="actionSearch"
-				android:singleLine="true"
+				android:layout_weight="1"
+				android:background="@android:color/transparent"
 				android:hint="@string/search"
-				android:textSize="16sp"
+				android:imeOptions="actionSearch"
+				android:inputType="text"
+				android:singleLine="true"
 				android:textColor="@android:color/white"
 				android:textColorHighlight="#a0a0a0"
 				android:textColorHint="#a0a0a0"
-				/>
+				android:textSize="16sp" />
 
 			<ImageButton
 				android:id="@+id/searchBack"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_height="52dp"
 				android:background="@drawable/button"
-				android:src="@drawable/ic_chevron_left_white_24dp"
-				/>
+				android:src="@drawable/ic_chevron_left_white_24dp" />
 
 			<ImageButton
 				android:id="@+id/searchForward"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_height="52dp"
 				android:background="@drawable/button"
-				android:src="@drawable/ic_chevron_right_white_24dp"
-				/>
+				android:src="@drawable/ic_chevron_right_white_24dp" />
 
 		</LinearLayout>
 
@@ -140,7 +134,7 @@
 		<SeekBar
 			android:id="@+id/pageSlider"
 			android:layout_width="match_parent"
-			android:layout_height="36dp"
+			android:layout_height="52dp"
 			android:layout_alignParentBottom="true"
 			android:layout_centerHorizontal="true"
 			android:layout_marginStart="0dp"

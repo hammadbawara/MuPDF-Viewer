@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	package="com.artifex.mupdf.viewer"
 	>
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-	<application>
+	<application
+		android:theme="@style/BaseTheme">
 		<activity
 			android:name=".DocumentActivity"
 			android:configChanges="orientation|screenSize|keyboardHidden"
 			android:exported="true"
 			>
-			<intent-filter>
+			<intent-filter android:scheme="http"
+				tools:ignore="AppLinkUrlError">
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.BROWSABLE" />
 				<category android:name="android.intent.category.DEFAULT" />

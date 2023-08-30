@@ -49,7 +49,6 @@ public class PageView extends ViewGroup {
 	private static final int HIGHLIGHT_COLOR = 0x80cc6600;
 	private static final int LINK_COLOR = 0x800066cc;
 	private static final int BOX_COLOR = 0xFF4444FF;
-	private static final int BACKGROUND_COLOR = 0xFFFFFFFF;
 	private static final int PROGRESS_DIALOG_DELAY = 200;
 
 	protected final Context mContext;
@@ -88,7 +87,6 @@ public class PageView extends ViewGroup {
 		mContext = c;
 		mCore = core;
 		mParentSize = parentSize;
-		setBackgroundColor(BACKGROUND_COLOR);
 		mEntireBm = Bitmap.createBitmap(parentSize.x, parentSize.y, Config.ARGB_8888);
 		mPatchBm = sharedHqBm;
 		mEntireMat = new Matrix();
@@ -170,7 +168,6 @@ public class PageView extends ViewGroup {
 			addView(mBusyIndicator);
 		}
 
-		setBackgroundColor(BACKGROUND_COLOR);
 	}
 
 	protected void clearRenderError() {
@@ -203,7 +200,6 @@ public class PageView extends ViewGroup {
 			addView(mErrorIndicator);
 			Drawable mErrorIcon = getResources().getDrawable(R.drawable.ic_error_red_24dp);
 			mErrorIndicator.setImageDrawable(mErrorIcon);
-			mErrorIndicator.setBackgroundColor(BACKGROUND_COLOR);
 		}
 
 		setBackgroundColor(Color.TRANSPARENT);
@@ -268,7 +264,6 @@ public class PageView extends ViewGroup {
 
 			@Override
 			public void onPreExecute() {
-				setBackgroundColor(BACKGROUND_COLOR);
 				mEntire.setImageBitmap(null);
 				mEntire.invalidate();
 

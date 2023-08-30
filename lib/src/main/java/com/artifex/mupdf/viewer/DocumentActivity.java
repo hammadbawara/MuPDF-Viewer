@@ -1,6 +1,5 @@
 package com.artifex.mupdf.viewer;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -22,6 +21,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -37,6 +37,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.artifex.mupdf.fitz.SeekableInputStream;
 
 import java.io.IOException;
@@ -44,40 +46,41 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class DocumentActivity extends Activity
-{
+public class DocumentActivity extends AppCompatActivity {
 	private final String APP = "MuPDF";
 
 	/* The core rendering instance */
-	enum TopBarMode {Main, Search, More};
+	enum TopBarMode {Main, Search, More}
 
-	private final int    OUTLINE_REQUEST=0;
-	private MuPDFCore    core;
-	private String       mDocTitle;
-	private String       mDocKey;
-	private ReaderView   mDocView;
-	private View         mButtonsView;
-	private boolean      mButtonsVisible;
-	private EditText     mPasswordView;
-	private TextView     mDocNameView;
-	private SeekBar      mPageSlider;
-	private int          mPageSliderRes;
-	private TextView     mPageNumberView;
-	private ImageButton  mSearchButton;
-	private ImageButton  mOutlineButton;
+	;
+
+	private final int OUTLINE_REQUEST = 0;
+	private MuPDFCore core;
+	private String mDocTitle;
+	private String mDocKey;
+	private ReaderView mDocView;
+	private View mButtonsView;
+	private boolean mButtonsVisible;
+	private EditText mPasswordView;
+	private TextView mDocNameView;
+	private SeekBar mPageSlider;
+	private int mPageSliderRes;
+	private TextView mPageNumberView;
+	private ImageButton mSearchButton;
+	private ImageButton mOutlineButton;
 	private ViewAnimator mTopBarSwitcher;
-	private ImageButton  mLinkButton;
-	private TopBarMode   mTopBarMode = TopBarMode.Main;
-	private ImageButton  mSearchBack;
-	private ImageButton  mSearchFwd;
-	private ImageButton  mSearchClose;
+	private ImageButton mLinkButton;
+	private TopBarMode mTopBarMode = TopBarMode.Main;
+	private ImageButton mSearchBack;
+	private ImageButton mSearchFwd;
+	private ImageButton mSearchClose;
 	private ImageButton mDarkMode;
-	private EditText     mSearchText;
-	private SearchTask   mSearchTask;
+	private EditText mSearchText;
+	private SearchTask mSearchTask;
 	private AlertDialog.Builder mAlertBuilder;
-	private boolean    mLinkHighlight = false;
+	private boolean mLinkHighlight = false;
 	private final Handler mHandler = new Handler();
-	private boolean mAlertsActive= false;
+	private boolean mAlertsActive = false;
 	private AlertDialog mAlertDialog;
 	private ArrayList<OutlineActivity.Item> mFlatOutline;
 	private boolean mReturnToLibraryActivity = false;
@@ -99,28 +102,20 @@ public class DocumentActivity extends Activity
 		return builder.toString();
 	}
 
-        private MuPDFCore openBuffer(byte buffer[], String magic)
-        {
-                try
-                {
-                        core = new MuPDFCore(buffer, magic);
-                }
-                catch (Exception e)
-                {
-                        Log.e(APP, "Error opening document buffer: " + e);
-                        return null;
-                }
-                return core;
+	private MuPDFCore openBuffer(byte buffer[], String magic) {
+		try {
+			core = new MuPDFCore(buffer, magic);
+		} catch (Exception e) {
+			Log.e(APP, "Error opening document buffer: " + e);
+			return null;
+		}
+		return core;
 	}
 
-	private MuPDFCore openStream(SeekableInputStream stm, String magic)
-	{
-		try
-		{
+	private MuPDFCore openStream(SeekableInputStream stm, String magic) {
+		try {
 			core = new MuPDFCore(stm, magic);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			Log.e(APP, "Error opening document stream: " + e);
 			return null;
 		}
@@ -182,10 +177,11 @@ public class DocumentActivity extends Activity
 		alert.show();
 	}
 
-	/** Called when the activity is first created. */
+	/**
+	 * Called when the activity is first created.
+	 */
 	@Override
-	public void onCreate(final Bundle savedInstanceState)
-	{
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -193,7 +189,7 @@ public class DocumentActivity extends Activity
 
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		mDisplayDPI = (int)metrics.densityDpi;
+		mDisplayDPI = (int) metrics.densityDpi;
 
 		mAlertBuilder = new AlertDialog.Builder(this);
 
@@ -212,7 +208,7 @@ public class DocumentActivity extends Activity
 				Uri uri = intent.getData();
 				String mimetype = getIntent().getType();
 
-				if (uri == null)  {
+				if (uri == null) {
 					showCannotOpenDialog("No document uri to open");
 					return;
 				}
@@ -274,13 +270,11 @@ public class DocumentActivity extends Activity
 				requestPassword(savedInstanceState);
 				return;
 			}
-			if (core != null && core.countPages() == 0)
-			{
+			if (core != null && core.countPages() == 0) {
 				core = null;
 			}
 		}
-		if (core == null)
-		{
+		if (core == null) {
 			AlertDialog alert = mAlertBuilder.create();
 			alert.setTitle(R.string.cannot_open_document);
 			alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.dismiss),
@@ -323,10 +317,10 @@ public class DocumentActivity extends Activity
 		alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel),
 				new DialogInterface.OnClickListener() {
 
-			public void onClick(DialogInterface dialog, int which) {
-				finish();
-			}
-		});
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+					}
+				});
 		alert.show();
 	}
 
@@ -401,8 +395,8 @@ public class DocumentActivity extends Activity
 		makeButtonsView();
 
 		// Set up the page slider
-		int smax = Math.max(core.countPages()-1,1);
-		mPageSliderRes = ((10 + smax - 1)/smax) * 2;
+		int smax = Math.max(core.countPages() - 1, 1);
+		mPageSliderRes = ((10 + smax - 1) / smax) * 2;
 
 		// Set the file-name text
 		String docTitle = core.getTitle();
@@ -415,14 +409,15 @@ public class DocumentActivity extends Activity
 		mPageSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				mDocView.pushHistory();
-				mDocView.setDisplayedViewIndex((seekBar.getProgress()+mPageSliderRes/2)/mPageSliderRes);
+				mDocView.setDisplayedViewIndex((seekBar.getProgress() + mPageSliderRes / 2) / mPageSliderRes);
 			}
 
-			public void onStartTrackingTouch(SeekBar seekBar) {}
+			public void onStartTrackingTouch(SeekBar seekBar) {
+			}
 
 			public void onProgressChanged(SeekBar seekBar, int progress,
-					boolean fromUser) {
-				updatePageNumView((progress+mPageSliderRes/2)/mPageSliderRes);
+										  boolean fromUser) {
+				updatePageNumView((progress + mPageSliderRes / 2) / mPageSliderRes);
 			}
 		});
 
@@ -459,10 +454,14 @@ public class DocumentActivity extends Activity
 					mDocView.resetupChildren();
 				}
 			}
+
 			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {}
+										  int after) {
+			}
+
 			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {}
+									  int count) {
+			}
 		});
 
 		//React to Done button on keyboard
@@ -545,12 +544,12 @@ public class DocumentActivity extends Activity
 
 		// Reenstate last state if it was recorded
 		SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-		mDocView.setDisplayedViewIndex(prefs.getInt("page"+mDocKey, 0));
+		mDocView.setDisplayedViewIndex(prefs.getInt("page" + mDocKey, 0));
 
 		if (savedInstanceState == null || !savedInstanceState.getBoolean("ButtonsHidden", false))
 			showButtons();
 
-		if(savedInstanceState != null && savedInstanceState.getBoolean("SearchMode", false))
+		if (savedInstanceState != null && savedInstanceState.getBoolean("SearchMode", false))
 			searchModeOn();
 
 		// Stick the document view and the buttons overlay into a parent view
@@ -564,12 +563,12 @@ public class DocumentActivity extends Activity
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-		case OUTLINE_REQUEST:
-			if (resultCode >= RESULT_FIRST_USER && mDocView != null) {
-				mDocView.pushHistory();
-				mDocView.setDisplayedViewIndex(resultCode-RESULT_FIRST_USER);
-			}
-			break;
+			case OUTLINE_REQUEST:
+				if (resultCode >= RESULT_FIRST_USER && mDocView != null) {
+					mDocView.pushHistory();
+					mDocView.setDisplayedViewIndex(resultCode - RESULT_FIRST_USER);
+				}
+				break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -588,7 +587,7 @@ public class DocumentActivity extends Activity
 			// so it can go in the bundle
 			SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
 			SharedPreferences.Editor edit = prefs.edit();
-			edit.putInt("page"+mDocKey, mDocView.getDisplayedViewIndex());
+			edit.putInt("page" + mDocKey, mDocView.getDisplayedViewIndex());
 			edit.apply();
 		}
 
@@ -609,17 +608,16 @@ public class DocumentActivity extends Activity
 		if (mDocKey != null && mDocView != null) {
 			SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
 			SharedPreferences.Editor edit = prefs.edit();
-			edit.putInt("page"+mDocKey, mDocView.getDisplayedViewIndex());
+			edit.putInt("page" + mDocKey, mDocView.getDisplayedViewIndex());
 			edit.apply();
 		}
 	}
 
-	public void onDestroy()
-	{
+	public void onDestroy() {
 		if (mDocView != null) {
 			mDocView.applyToChildren(new ReaderView.ViewMapper() {
 				void applyToView(View view) {
-					((PageView)view).releaseBitmaps();
+					((PageView) view).releaseBitmaps();
 				}
 			});
 		}
@@ -651,7 +649,7 @@ public class DocumentActivity extends Activity
 			// Update page number text and slider
 			int index = mDocView.getDisplayedViewIndex();
 			updatePageNumView(index);
-			mPageSlider.setMax((core.countPages()-1)*mPageSliderRes);
+			mPageSlider.setMax((core.countPages() - 1) * mPageSliderRes);
 			mPageSlider.setProgress(index * mPageSliderRes);
 			if (mTopBarMode == TopBarMode.Search) {
 				mSearchText.requestFocus();
@@ -664,8 +662,12 @@ public class DocumentActivity extends Activity
 				public void onAnimationStart(Animation animation) {
 					mTopBarSwitcher.setVisibility(View.VISIBLE);
 				}
-				public void onAnimationRepeat(Animation animation) {}
-				public void onAnimationEnd(Animation animation) {}
+
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				public void onAnimationEnd(Animation animation) {
+				}
 			});
 			mTopBarSwitcher.startAnimation(anim);
 
@@ -675,7 +677,10 @@ public class DocumentActivity extends Activity
 				public void onAnimationStart(Animation animation) {
 					mPageSlider.setVisibility(View.VISIBLE);
 				}
-				public void onAnimationRepeat(Animation animation) {}
+
+				public void onAnimationRepeat(Animation animation) {
+				}
+
 				public void onAnimationEnd(Animation animation) {
 					mPageNumberView.setVisibility(View.VISIBLE);
 				}
@@ -692,8 +697,12 @@ public class DocumentActivity extends Activity
 			Animation anim = new TranslateAnimation(0, 0, 0, -mTopBarSwitcher.getHeight());
 			anim.setDuration(200);
 			anim.setAnimationListener(new Animation.AnimationListener() {
-				public void onAnimationStart(Animation animation) {}
-				public void onAnimationRepeat(Animation animation) {}
+				public void onAnimationStart(Animation animation) {
+				}
+
+				public void onAnimationRepeat(Animation animation) {
+				}
+
 				public void onAnimationEnd(Animation animation) {
 					mTopBarSwitcher.setVisibility(View.INVISIBLE);
 				}
@@ -706,7 +715,10 @@ public class DocumentActivity extends Activity
 				public void onAnimationStart(Animation animation) {
 					mPageNumberView.setVisibility(View.INVISIBLE);
 				}
-				public void onAnimationRepeat(Animation animation) {}
+
+				public void onAnimationRepeat(Animation animation) {
+				}
+
 				public void onAnimationEnd(Animation animation) {
 					mPageSlider.setVisibility(View.INVISIBLE);
 				}
@@ -745,17 +757,17 @@ public class DocumentActivity extends Activity
 
 	private void makeButtonsView() {
 		mButtonsView = getLayoutInflater().inflate(R.layout.document_activity, null);
-		mDocNameView = (TextView)mButtonsView.findViewById(R.id.docNameText);
-		mPageSlider = (SeekBar)mButtonsView.findViewById(R.id.pageSlider);
-		mPageNumberView = (TextView)mButtonsView.findViewById(R.id.pageNumber);
-		mSearchButton = (ImageButton)mButtonsView.findViewById(R.id.searchButton);
-		mOutlineButton = (ImageButton)mButtonsView.findViewById(R.id.outlineButton);
-		mTopBarSwitcher = (ViewAnimator)mButtonsView.findViewById(R.id.switcher);
-		mSearchBack = (ImageButton)mButtonsView.findViewById(R.id.searchBack);
-		mSearchFwd = (ImageButton)mButtonsView.findViewById(R.id.searchForward);
-		mSearchClose = (ImageButton)mButtonsView.findViewById(R.id.searchClose);
-		mSearchText = (EditText)mButtonsView.findViewById(R.id.searchText);
-		mLinkButton = (ImageButton)mButtonsView.findViewById(R.id.linkButton);
+		mDocNameView = (TextView) mButtonsView.findViewById(R.id.docNameText);
+		mPageSlider = (SeekBar) mButtonsView.findViewById(R.id.pageSlider);
+		mPageNumberView = (TextView) mButtonsView.findViewById(R.id.pageNumber);
+		mSearchButton = (ImageButton) mButtonsView.findViewById(R.id.searchButton);
+		mOutlineButton = (ImageButton) mButtonsView.findViewById(R.id.outlineButton);
+		mTopBarSwitcher = (ViewAnimator) mButtonsView.findViewById(R.id.switcher);
+		mSearchBack = (ImageButton) mButtonsView.findViewById(R.id.searchBack);
+		mSearchFwd = (ImageButton) mButtonsView.findViewById(R.id.searchForward);
+		mSearchClose = (ImageButton) mButtonsView.findViewById(R.id.searchClose);
+		mSearchText = (EditText) mButtonsView.findViewById(R.id.searchText);
+		mLinkButton = (ImageButton) mButtonsView.findViewById(R.id.linkButton);
 		mLayoutButton = mButtonsView.findViewById(R.id.layoutButton);
 		mDarkMode = (ImageButton) mButtonsView.findViewById(R.id.darkModeButton);
 		mTopBarSwitcher.setVisibility(View.INVISIBLE);
@@ -765,13 +777,13 @@ public class DocumentActivity extends Activity
 	}
 
 	private void showKeyboard() {
-		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		if (imm != null)
 			imm.showSoftInput(mSearchText, 0);
 	}
 
 	private void hideKeyboard() {
-		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		if (imm != null)
 			imm.hideSoftInputFromWindow(mSearchText.getWindowToken(), 0);
 	}
