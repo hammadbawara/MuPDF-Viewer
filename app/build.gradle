@@ -31,6 +31,7 @@ android {
 			enableSplit true
 		}
 	}
+	namespace 'com.artifex.mupdf.viewer.app'
 
 	if (project.hasProperty('release_storeFile')) {
 		signingConfigs {
