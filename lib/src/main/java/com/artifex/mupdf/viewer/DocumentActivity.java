@@ -21,7 +21,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -38,15 +37,18 @@ import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 import com.artifex.mupdf.fitz.SeekableInputStream;
+import com.artifex.mupdf.viewer.outline.SharedViewModel;
+import com.artifex.mupdf.viewer.outline.OutlineDialog;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class DocumentActivity extends AppCompatActivity {
+public class DocumentActivity extends AppCompatActivity implements OutlineDialog.Listeners {
 	private final String APP = "MuPDF";
 
 	/* The core rendering instance */
@@ -94,6 +96,7 @@ public class DocumentActivity extends AppCompatActivity {
 
 	protected View mLayoutButton;
 	protected PopupMenu mLayoutPopupMenu;
+	private SharedViewModel mViewModel;
 
 	private String toHex(byte[] digest) {
 		StringBuilder builder = new StringBuilder(2 * digest.length);
@@ -183,9 +186,10 @@ public class DocumentActivity extends AppCompatActivity {
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		//getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		mViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication()))
+				.get(SharedViewModel.class);
 
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -524,19 +528,13 @@ public class DocumentActivity extends AppCompatActivity {
 		}
 
 		if (core.hasOutline()) {
-			mOutlineButton.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					if (mFlatOutline == null)
-						mFlatOutline = core.getOutline();
-					if (mFlatOutline != null) {
-						Intent intent = new Intent(DocumentActivity.this, OutlineActivity.class);
-						Bundle bundle = new Bundle();
-						bundle.putInt("POSITION", mDocView.getDisplayedViewIndex());
-						bundle.putSerializable("OUTLINE", mFlatOutline);
-						intent.putExtra("PALLETBUNDLE", Pallet.sendBundle(bundle));
-						startActivityForResult(intent, OUTLINE_REQUEST);
-					}
-				}
+			if (mViewModel.outlineList == null) {
+				mViewModel.outlineList = core.getOutlineTreeList();
+			}
+			mViewModel.outlineListener = this;
+			mOutlineButton.setOnClickListener(v -> {
+				DialogFragment fragment = new OutlineDialog();
+				fragment.show(getSupportFragmentManager(), "OutlineDialogFragment");
 			});
 		} else {
 			mOutlineButton.setVisibility(View.GONE);
@@ -558,6 +556,11 @@ public class DocumentActivity extends AppCompatActivity {
 		layout.addView(mDocView);
 		layout.addView(mButtonsView);
 		setContentView(layout);
+	}
+
+	@Override
+	public void onOutlineClicked(int pageNum) {
+		mDocView.setDisplayedViewIndex(pageNum);
 	}
 
 	@Override

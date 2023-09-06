@@ -1,5 +1,6 @@
 package com.artifex.mupdf.viewer;
 
+import com.amrdeveloper.treeview.TreeNode;
 import com.artifex.mupdf.fitz.Cookie;
 import com.artifex.mupdf.fitz.DisplayList;
 import com.artifex.mupdf.fitz.Document;
@@ -18,6 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.PointF;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MuPDFCore
 {
@@ -221,4 +223,35 @@ public class MuPDFCore
 	public synchronized boolean authenticatePassword(String password) {
 		return doc.authenticatePassword(password);
 	}
+
+	public List<TreeNode> getOutlineTreeList() {
+		List<TreeNode> treeNodeList = new ArrayList<>();
+		TreeNode treeNode = null;
+		for (Outline node : outline) {
+			if (node.title != null) {
+				int page = doc.pageNumberFromLocation(doc.resolveLink(node));
+				treeNode = new TreeNode(node.title, R.layout.outline_item, page);
+				treeNodeList.add(treeNode);
+			}
+			if (node.down != null){
+				if (treeNode != null)
+					getChildrenNodes(treeNode, node.down);
+			}
+
+		}
+		return treeNodeList;
+	}
+
+	private TreeNode getChildrenNodes(TreeNode childNode, Outline outline[]) {
+		for (Outline node : outline) {
+			if (node.title != null) {
+				int page = doc.pageNumberFromLocation(doc.resolveLink(node));
+				childNode.addChild(new TreeNode(node.title, R.layout.outline_item, page));
+			}
+			if (node.down != null)
+				getChildrenNodes(childNode, node.down);
+		}
+		return childNode;
+	}
+
 }
