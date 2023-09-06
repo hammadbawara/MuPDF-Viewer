@@ -39,9 +39,10 @@ import android.widget.ViewAnimator;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.artifex.mupdf.fitz.SeekableInputStream;
-import com.artifex.mupdf.viewer.outline.SharedViewModel;
 import com.artifex.mupdf.viewer.outline.OutlineDialog;
+import com.artifex.mupdf.viewer.outline.SharedViewModel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -534,6 +535,9 @@ public class DocumentActivity extends AppCompatActivity implements OutlineDialog
 			mViewModel.outlineListener = this;
 			mOutlineButton.setOnClickListener(v -> {
 				DialogFragment fragment = new OutlineDialog();
+				Bundle bundle = new Bundle();
+				bundle.putInt("PAGE_NUMBER", mDocView.getDisplayedViewIndex());
+				fragment.setArguments(bundle);
 				fragment.show(getSupportFragmentManager(), "OutlineDialogFragment");
 			});
 		} else {

@@ -1,6 +1,7 @@
 package com.artifex.mupdf.viewer.outline;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -36,6 +37,8 @@ public class OutlineDialog extends DialogFragment {
     RotateAnimation rotate0to90;
     RotateAnimation rotate90to0;
 
+    int pageNum;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,6 +51,7 @@ public class OutlineDialog extends DialogFragment {
         rotate90to0 = new RotateAnimation(90f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         rotate90to0.setDuration(400);
         rotate90to0.setFillAfter(true);
+        pageNum = getArguments().getInt("PAGE_NUMBER") + 1;
         return view;
     }
 
@@ -67,6 +71,8 @@ public class OutlineDialog extends DialogFragment {
         nodeManager = new TreeNodeManager();
         nodeManager.setTreeNodes(treeNodeList);
 
+        findSelectedOutline();
+
         treeViewAdapter = new TreeViewAdapter(factory, nodeManager);
 
         treeViewAdapter.setTreeNodeClickListener((treeNode, view) -> {
@@ -76,6 +82,7 @@ public class OutlineDialog extends DialogFragment {
             }
         });
         recyclerView.setAdapter(treeViewAdapter);
+        recyclerView.scrollToPosition(mViewModel.selectedPosition);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
@@ -98,13 +105,13 @@ public class OutlineDialog extends DialogFragment {
                 btn.setVisibility(View.INVISIBLE);
             }else {
                 btn.setVisibility(View.VISIBLE);
-                if (node.isSelected()) {
+                if (node.shouldShowAnimation()) {
                     if (node.isExpanded()) {
                         btn.startAnimation(rotate0to90);
                     }else {
                         btn.startAnimation(rotate90to0);
                     }
-                    node.setSelected(false);
+                    node.setShouldShowAnimation(false);
                 } else {
                     if (node.isExpanded()) {
                         btn.setRotation(90f);
@@ -114,15 +121,38 @@ public class OutlineDialog extends DialogFragment {
                 }
             }
 
+            if (position == mViewModel.selectedPosition) {
+                itemView.setBackgroundColor(getResources().getColor(R.color.selected_color));
+            }else {
+                itemView.setBackgroundColor(Color.TRANSPARENT);
+            }
+
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     treeViewAdapter.collapseExpandNodes(node, position);
-                    node.setSelected(true);
+                    node.setShouldShowAnimation(true);
+                    findSelectedOutline();
                 }
             });
             textView.setText(node.getValue().toString());
         }
+    }
+
+    void findSelectedOutline() {
+        int position = -1;
+        for (int i=0; i<nodeManager.getTreeNodes().size(); i++) {
+            TreeNode node = nodeManager.getTreeNodes().get(i);
+            if (node.getPageNum()<pageNum) {
+                position += 1;
+            }else {
+                break;
+            }
+        }
+        if (position == -1) {
+            position = 0;
+        }
+        mViewModel.selectedPosition = position;
     }
 
     @Override
