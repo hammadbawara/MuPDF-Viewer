@@ -8,11 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,12 +33,21 @@ public class OutlineDialog extends DialogFragment {
     TreeViewAdapter treeViewAdapter;
     RecyclerView recyclerView;
     SharedViewModel mViewModel;
+    RotateAnimation rotate0to90;
+    RotateAnimation rotate90to0;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.outline_fragment, container, false);
         mViewModel = new ViewModelProvider(requireActivity(), new ViewModelProvider.NewInstanceFactory())
                 .get(SharedViewModel.class);
+        rotate0to90 = new RotateAnimation(0f, 90f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotate0to90.setDuration(400);
+        rotate0to90.setFillAfter(true);
+        rotate90to0 = new RotateAnimation(90f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotate90to0.setDuration(400);
+        rotate90to0.setFillAfter(true);
         return view;
     }
 
@@ -86,15 +93,32 @@ public class OutlineDialog extends DialogFragment {
         @Override
         public void bindTreeNode(TreeNode node, int position) {
             super.bindTreeNode(node, position);
+
             if (node.getChildren().size() == 0) {
                 btn.setVisibility(View.INVISIBLE);
             }else {
                 btn.setVisibility(View.VISIBLE);
+                if (node.isSelected()) {
+                    if (node.isExpanded()) {
+                        btn.startAnimation(rotate0to90);
+                    }else {
+                        btn.startAnimation(rotate90to0);
+                    }
+                    node.setSelected(false);
+                } else {
+                    if (node.isExpanded()) {
+                        btn.setRotation(90f);
+                    }else {
+                        btn.setRotation(0f);
+                    }
+                }
             }
+
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     treeViewAdapter.collapseExpandNodes(node, position);
+                    node.setSelected(true);
                 }
             });
             textView.setText(node.getValue().toString());
