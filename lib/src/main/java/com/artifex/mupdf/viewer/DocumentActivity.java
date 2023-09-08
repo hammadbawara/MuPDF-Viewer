@@ -34,6 +34,7 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewAnimator;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -78,6 +79,7 @@ public class DocumentActivity extends AppCompatActivity implements OutlineDialog
 	private ImageButton mSearchFwd;
 	private ImageButton mSearchClose;
 	private ImageButton mDarkMode;
+	private ImageButton mMoreOptions;
 	private EditText mSearchText;
 	private SearchTask mSearchTask;
 	private AlertDialog.Builder mAlertBuilder;
@@ -497,6 +499,10 @@ public class DocumentActivity extends AppCompatActivity implements OutlineDialog
 			mDocView.setDarkMode(isDarkMode);
 		});
 
+		mMoreOptions.setOnClickListener(v -> {
+			showPopUpMenu();
+		});
+
 		if (core.isReflowable()) {
 			mLayoutButton.setVisibility(View.VISIBLE);
 			mLayoutPopupMenu = new PopupMenu(this, mLayoutButton);
@@ -560,6 +566,19 @@ public class DocumentActivity extends AppCompatActivity implements OutlineDialog
 		layout.addView(mDocView);
 		layout.addView(mButtonsView);
 		setContentView(layout);
+	}
+
+	private void showPopUpMenu() {
+		PopupMenu popupMenu = new PopupMenu(this, mMoreOptions);
+		popupMenu.inflate(R.menu.more_options);
+		popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				Toast.makeText(DocumentActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
+				return true;
+			}
+		});
+		popupMenu.show();
 	}
 
 	@Override
@@ -777,6 +796,7 @@ public class DocumentActivity extends AppCompatActivity implements OutlineDialog
 		mLinkButton = (ImageButton) mButtonsView.findViewById(R.id.linkButton);
 		mLayoutButton = mButtonsView.findViewById(R.id.layoutButton);
 		mDarkMode = (ImageButton) mButtonsView.findViewById(R.id.darkModeButton);
+		mMoreOptions = (ImageButton) mButtonsView.findViewById(R.id.moreOptions);
 		mTopBarSwitcher.setVisibility(View.INVISIBLE);
 		mPageNumberView.setVisibility(View.INVISIBLE);
 
