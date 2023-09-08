@@ -82,10 +82,9 @@ public class OutlineDialog extends DialogFragment {
             }
         });
         recyclerView.setAdapter(treeViewAdapter);
-        recyclerView.scrollToPosition(mViewModel.selectedPosition);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-
+        recyclerView.scrollToPosition(mViewModel.selectedPosition);
     }
 
     public class OutlineViewHolder extends TreeViewHolder {
@@ -102,7 +101,7 @@ public class OutlineDialog extends DialogFragment {
             super.bindTreeNode(node, position);
 
             if (node.getChildren().size() == 0) {
-                btn.setVisibility(View.INVISIBLE);
+                btn.setVisibility(View.GONE);
             }else {
                 btn.setVisibility(View.VISIBLE);
                 if (node.shouldShowAnimation()) {
@@ -122,9 +121,9 @@ public class OutlineDialog extends DialogFragment {
             }
 
             if (position == mViewModel.selectedPosition) {
-                itemView.setBackgroundColor(getResources().getColor(R.color.selected_color));
+                textView.setBackgroundColor(getResources().getColor(R.color.selected_color));
             }else {
-                itemView.setBackgroundColor(Color.TRANSPARENT);
+                textView.setBackgroundColor(Color.TRANSPARENT);
             }
 
             btn.setOnClickListener(new View.OnClickListener() {
