@@ -104,13 +104,13 @@ public class OutlineDialog extends DialogFragment {
                 btn.setVisibility(View.GONE);
             }else {
                 btn.setVisibility(View.VISIBLE);
-                if (node.shouldShowAnimation()) {
+                if (node.isSelected()) {
                     if (node.isExpanded()) {
                         btn.startAnimation(rotate0to90);
                     }else {
                         btn.startAnimation(rotate90to0);
                     }
-                    node.setShouldShowAnimation(false);
+                    node.setSelected(false);
                 } else {
                     if (node.isExpanded()) {
                         btn.setRotation(90f);

@@ -7,7 +7,7 @@ version = '1.22.0a'
 dependencies {
 	implementation 'androidx.appcompat:appcompat:1.1.+'
 	implementation 'androidx.recyclerview:recyclerview:1.3.1'
-	implementation files("treeview-android.aar")
+	implementation project(path: ':treeview-android')
 	if (file('../jni/build.gradle').isFile())
 		api project(':jni')
 	else
