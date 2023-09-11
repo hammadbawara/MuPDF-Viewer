@@ -3,6 +3,7 @@ package com.artifex.mupdf.viewer.outline;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.amrdeveloper.treeview.TreeViewAdapter;
 import com.amrdeveloper.treeview.TreeViewHolder;
 import com.amrdeveloper.treeview.TreeViewHolderFactory;
 import com.artifex.mupdf.viewer.R;
+import com.artifex.mupdf.viewer.Utils;
 
 import java.util.List;
 
@@ -84,7 +86,14 @@ public class OutlineDialog extends DialogFragment {
         recyclerView.setAdapter(treeViewAdapter);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        recyclerView.scrollToPosition(mViewModel.selectedPosition);
+        int scrollTo;
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        if ((mViewModel.selectedPosition -3 )> -1) {
+            scrollTo = mViewModel.selectedPosition -3;
+        } else{
+            scrollTo = 0;
+        }
+        recyclerView.scrollToPosition(scrollTo);
     }
 
     public class OutlineViewHolder extends TreeViewHolder {
@@ -130,9 +139,9 @@ public class OutlineDialog extends DialogFragment {
             }
 
             if (position == mViewModel.selectedPosition) {
-                textView.setBackgroundColor(getResources().getColor(R.color.selected_color));
+                itemView.setBackgroundColor(getResources().getColor(R.color.selected_color));
             }else {
-                textView.setBackgroundColor(Color.TRANSPARENT);
+                itemView.setBackgroundColor(Color.TRANSPARENT);
             }
 
             btn.setOnClickListener(new View.OnClickListener() {
@@ -167,7 +176,14 @@ public class OutlineDialog extends DialogFragment {
     public void onResume() {
         super.onResume();
         WindowManager.LayoutParams params = requireDialog().getWindow().getAttributes();
-        params.width = 800;
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        int screenWidth = displayMetrics.widthPixels;
+
+        int width = Utils.dpToPx(getResources(), 350);
+        if (width > screenWidth) {
+            width = WindowManager.LayoutParams.MATCH_PARENT;
+        }
+        params.width = width;
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         params.gravity = Gravity.END + Gravity.TOP;
         requireDialog().getWindow().setAttributes(params);

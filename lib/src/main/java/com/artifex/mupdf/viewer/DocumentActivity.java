@@ -1,6 +1,7 @@
 package com.artifex.mupdf.viewer;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,6 +29,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -100,6 +102,8 @@ public class DocumentActivity extends AppCompatActivity implements OutlineDialog
 	protected View mLayoutButton;
 	protected PopupMenu mLayoutPopupMenu;
 	private SharedViewModel mViewModel;
+
+	DialogFragment mOutlineDialog = null;
 
 	private String toHex(byte[] digest) {
 		StringBuilder builder = new StringBuilder(2 * digest.length);
@@ -503,6 +507,13 @@ public class DocumentActivity extends AppCompatActivity implements OutlineDialog
 			showPopUpMenu();
 		});
 
+		mPageNumberView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showGoToPageDialog();
+			}
+		});
+
 		if (core.isReflowable()) {
 			mLayoutButton.setVisibility(View.VISIBLE);
 			mLayoutPopupMenu = new PopupMenu(this, mLayoutButton);
@@ -540,11 +551,13 @@ public class DocumentActivity extends AppCompatActivity implements OutlineDialog
 			}
 			mViewModel.outlineListener = this;
 			mOutlineButton.setOnClickListener(v -> {
-				DialogFragment fragment = new OutlineDialog();
+				if (mOutlineDialog == null) {
+					mOutlineDialog = new OutlineDialog();
+				}
 				Bundle bundle = new Bundle();
 				bundle.putInt("PAGE_NUMBER", mDocView.getDisplayedViewIndex());
-				fragment.setArguments(bundle);
-				fragment.show(getSupportFragmentManager(), "OutlineDialogFragment");
+				mOutlineDialog.setArguments(bundle);
+				mOutlineDialog.show(getSupportFragmentManager(), "OutlineDialogFragment");
 			});
 		} else {
 			mOutlineButton.setVisibility(View.GONE);
@@ -568,6 +581,41 @@ public class DocumentActivity extends AppCompatActivity implements OutlineDialog
 		setContentView(layout);
 	}
 
+	private void showGoToPageDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		View view = getLayoutInflater().inflate(R.layout.dialog_go_to, null);
+		builder.setView(view);
+		final Dialog mDialog = builder.create();
+
+		EditText mGoToPage = view.findViewById(R.id.go_page_number);
+		Button mGoBtn = view.findViewById(R.id.go_to_btn);
+		Button mCancelBtn = view.findViewById(R.id.cancel_btn);
+
+		mGoToPage.setHint("1-" + Integer.toString(core.countPages()));
+
+		mGoBtn.setOnClickListener(v -> {
+			int pageNum = -1;
+			try{
+				pageNum = Integer.parseInt(mGoToPage.getText().toString());
+			} catch (Exception ignored) {}
+
+			if (pageNum > 0 && pageNum < core.countPages() + 1) {
+				mDocView.pushHistory();
+				mDocView.setDisplayedViewIndex(pageNum -1);
+				mDialog.dismiss();
+			}else{
+				mGoToPage.setError("Range is " + "(1-" + Integer.toString(core.countPages()) + ")");
+			}
+		});
+
+		mCancelBtn.setOnClickListener(v -> {
+			mDialog.dismiss();
+		});
+		mDialog.show();
+
+
+	}
+
 	private void showPopUpMenu() {
 		PopupMenu popupMenu = new PopupMenu(this, mMoreOptions);
 		popupMenu.inflate(R.menu.more_options);
@@ -583,6 +631,7 @@ public class DocumentActivity extends AppCompatActivity implements OutlineDialog
 
 	@Override
 	public void onOutlineClicked(int pageNum) {
+		mDocView.pushHistory();
 		mDocView.setDisplayedViewIndex(pageNum);
 	}
 
