@@ -39,7 +39,7 @@ public class TreeNode {
     private int level;
     private boolean isExpanded;
     private boolean isSelected;
-    private boolean showAnimation;
+    private int chapterNumber = -1;
 
     public TreeNode(Object value, int layoutId, int pageNum) {
         this.value = value;
@@ -50,7 +50,6 @@ public class TreeNode {
         this.isExpanded = false;
         this.isSelected = false;
         this.pageNum = pageNum;
-        showAnimation = false;
     }
 
     public void addChild(TreeNode child) {
@@ -116,12 +115,12 @@ public class TreeNode {
         this.pageNum = pageNum;
     }
 
-    public boolean shouldShowAnimation() {
-        return showAnimation;
+    public int getChapterNumber() {
+        return chapterNumber;
     }
 
-    public void setShouldShowAnimation(boolean showAnimation) {
-        this.showAnimation = showAnimation;
+    public void setChapterNumber(int chapterNumber) {
+        this.chapterNumber = chapterNumber;
     }
 
     private void updateNodeChildrenDepth(TreeNode node) {

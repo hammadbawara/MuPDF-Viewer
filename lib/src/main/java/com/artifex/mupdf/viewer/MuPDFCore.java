@@ -230,6 +230,16 @@ public class MuPDFCore
 			if (node.title != null) {
 				int page = doc.pageNumberFromLocation(doc.resolveLink(node));
 				treeNode = new TreeNode(node.title, R.layout.outline_item, page);
+				if (node.title.startsWith("ch_")) {
+					try{
+						int minusPos = node.title.indexOf("-");
+						int chapterNo = Integer.parseInt(node.title.substring(3, minusPos));
+						treeNode.setChapterNumber(chapterNo);
+						treeNode.setValue(node.title.substring(minusPos+1));
+					}catch (Exception ignored){
+
+					}
+				}
 				treeNodeList.add(treeNode);
 			}
 			if (node.down != null){
@@ -245,7 +255,16 @@ public class MuPDFCore
 		for (Outline node : outline) {
 			if (node.title != null) {
 				int page = doc.pageNumberFromLocation(doc.resolveLink(node));
-				childNode.addChild(new TreeNode(node.title, R.layout.outline_item, page));
+				TreeNode treeNode = new TreeNode(node.title, R.layout.outline_item, page);
+				try{
+					int minusPos = node.title.indexOf("-");
+					int chapterNo = Integer.parseInt(node.title.substring(3, minusPos));
+					treeNode.setChapterNumber(chapterNo);
+					treeNode.setValue(node.title.substring(minusPos+1));
+				}catch (Exception ignored){
+
+				}
+				childNode.addChild(treeNode);
 			}
 			if (node.down != null)
 				getChildrenNodes(childNode, node.down);

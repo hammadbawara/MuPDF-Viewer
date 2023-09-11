@@ -90,10 +90,12 @@ public class OutlineDialog extends DialogFragment {
     public class OutlineViewHolder extends TreeViewHolder {
         ImageButton btn;
         TextView textView;
+        TextView chapterNoView;
         public OutlineViewHolder(@NonNull View itemView) {
             super(itemView);
             btn = itemView.findViewById(R.id.more_outline_btn);
             textView = itemView.findViewById(R.id.outline_item_text);
+            chapterNoView = itemView.findViewById(R.id.chapterNo);
         }
 
         @Override
@@ -120,6 +122,13 @@ public class OutlineDialog extends DialogFragment {
                 }
             }
 
+            if (node.getChapterNumber() != -1) {
+                chapterNoView.setVisibility(View.VISIBLE);
+                chapterNoView.setText(Integer.toString(node.getChapterNumber()));
+            }else {
+                chapterNoView.setVisibility(View.GONE);
+            }
+
             if (position == mViewModel.selectedPosition) {
                 textView.setBackgroundColor(getResources().getColor(R.color.selected_color));
             }else {
@@ -130,7 +139,7 @@ public class OutlineDialog extends DialogFragment {
                 @Override
                 public void onClick(View view) {
                     treeViewAdapter.collapseExpandNodes(node, position);
-                    node.setShouldShowAnimation(true);
+                    node.setSelected(true);
                     findSelectedOutline();
                 }
             });
