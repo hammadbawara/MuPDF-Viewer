@@ -164,9 +164,8 @@
 			android:layout_centerHorizontal="true"
 			android:layout_marginBottom="16dp"
 			android:background="@drawable/page_indicator"
-			android:textSize="16sp"
 			android:textColor="@android:color/white"
-			/>
+			android:textSize="18sp" />
 
 	</RelativeLayout>
 
