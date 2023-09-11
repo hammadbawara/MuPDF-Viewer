@@ -152,9 +152,7 @@
 			android:paddingLeft="16dp"
 			android:paddingTop="12dp"
 			android:paddingRight="16dp"
-			android:paddingBottom="8dp"
-			android:progressDrawable="@drawable/seek_line"
-			android:thumb="@drawable/seek_thumb" />
+			android:paddingBottom="8dp"/>
 
 		<TextView
 			android:id="@+id/pageNumber"
@@ -162,7 +160,7 @@
 			android:layout_height="wrap_content"
 			android:layout_above="@+id/pageSlider"
 			android:layout_centerHorizontal="true"
-			android:layout_marginBottom="16dp"
+			android:layout_marginBottom="8dp"
 			android:background="@drawable/page_indicator"
 			android:textColor="@android:color/white"
 			android:textSize="18sp" />
