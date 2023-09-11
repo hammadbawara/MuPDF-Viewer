@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
+	package="com.hz_apps.books.main"
 	>
 	<application
-		android:label="MuPDF viewer"
+		android:label="Book Viewer"
 		android:icon="@drawable/ic_mupdf"
 		>
 		<activity
-			android:name=".LibraryActivity"
+			android:name=".MainActivity"
 			android:exported="true"
 			>
 			<intent-filter>
