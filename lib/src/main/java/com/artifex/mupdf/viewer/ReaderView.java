@@ -15,6 +15,8 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Scroller;
 
+import androidx.annotation.NonNull;
+
 import com.artifex.mupdf.fitz.Link;
 
 import java.util.LinkedList;
@@ -23,7 +25,7 @@ import java.util.Stack;
 
 public class ReaderView
 		extends AdapterView<Adapter>
-		implements GestureDetector.OnGestureListener, ScaleGestureDetector.OnScaleGestureListener, Runnable {
+		implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener, Runnable {
 	private Context mContext;
 	private boolean mLinksEnabled = false;
 	private boolean tapDisabled = false;
@@ -67,6 +69,42 @@ public class ReaderView
 	private float		  mLastScaleFocusY;
 
 	protected Stack<Integer> mHistory;
+
+	@Override
+	public boolean onSingleTapConfirmed(@NonNull MotionEvent e) {
+		return false;
+	}
+
+	@Override
+	public boolean onDoubleTap(@NonNull MotionEvent e) {
+
+		View v = mChildViews.get(mCurrent);
+		if (v != null) {
+			if (mScale < 2.0) {
+				mXScroll -= e.getX() - (v.getLeft() + mXScroll);
+				mYScroll -= e.getY() - (v.getTop() + mYScroll);
+				mScrollerLastX = mScrollerLastY = 0;
+				mScroller.startScroll(0, 0, 0, 0, 400);
+				mStepper.prod();
+				mScale = mScale * 2.0f;
+			} else {
+				mXScroll -= e.getX() - (v.getLeft() + mXScroll);
+				mYScroll -= e.getY() - (v.getTop() + mYScroll);
+				mScrollerLastX = mScrollerLastY = 0;
+				mScroller.startScroll(0, 0, 0, 0, 400);
+				mScale = 1.0f;
+				mStepper.prod();
+			}
+
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean onDoubleTapEvent(@NonNull MotionEvent e) {
+		return false;
+	}
 
 	static abstract class ViewMapper {
 		abstract void applyToView(View view);
